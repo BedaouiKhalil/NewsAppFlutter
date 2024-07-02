@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:newsapp/models/article_model.dart';
 
 class NewsTitle extends StatelessWidget {
-  const NewsTitle({super.key});
+  const NewsTitle({super.key,required this.articleModel});
 
+final ArticleModel articleModel;
   @override
   Widget build(BuildContext context) {
     return Column(
@@ -11,7 +13,7 @@ class NewsTitle extends StatelessWidget {
         ClipRRect(
           borderRadius: BorderRadius.circular(6),
           child: Image.network(
-              'https://images.pexels.com/photos/462118/pexels-photo-462118.jpeg?auto=compress&cs=tinysrgb&dpr=1&w=500',
+              articleModel.image?? 'https://www.washingtonpost.com/wp-apps/imrs.php?src=https://arc-anglerfish-washpost-prod-washpost.s3.amazonaws.com/public/NYCGCBYE4YSDRHV6JYIJ7VUUB4.JPG&w=1440',
               height: 200,
               width: double.infinity,
               fit: BoxFit.cover,
@@ -20,11 +22,11 @@ class NewsTitle extends StatelessWidget {
         const SizedBox(
           height: 12,
         ),
-        const Text(
-          'title',
+        Text(
+          articleModel.title,
           maxLines: 2,
           overflow: TextOverflow.ellipsis,
-          style: TextStyle(
+          style: const TextStyle(
             color: Colors.black87,
             fontSize: 20,
             fontWeight: FontWeight.w500,
@@ -33,10 +35,10 @@ class NewsTitle extends StatelessWidget {
         const SizedBox(
           height: 8,
         ),
-        const Text(
-          'sub Title',
+        Text(
+         articleModel.subTitle ?? '',
           maxLines: 2,
-          style: TextStyle(color: Colors.grey, fontSize: 14),
+          style: const TextStyle(color: Colors.grey, fontSize: 14),
         ),
       ],
     );
