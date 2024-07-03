@@ -4,38 +4,42 @@ import 'package:newsapp/models/article_model.dart';
 import 'package:newsapp/services/news_services.dart';
 import 'package:newsapp/widgets/news_list_views.dart';
 
-class NewListViewBuilder extends StatefulWidget {
-  const NewListViewBuilder({
-    super.key,
-  });
+class NewsListViewBuilder extends StatefulWidget {
+  const NewsListViewBuilder({super.key});
 
   @override
-  State<NewListViewBuilder> createState() => _NewListViewBuilderState();
+  State<NewsListViewBuilder> createState() => _NewsListViewBuilderState();
 }
 
-class _NewListViewBuilderState extends State<NewListViewBuilder> {
-  List<ArticleModel> articles = [];
-  bool isLoading = true;
+class _NewsListViewBuilderState extends State<NewsListViewBuilder> {
+  var future;
   @override
   void initState() {
     super.initState();
-    getGeneralNews();
-  }
-
-  Future<void> getGeneralNews() async {
-    articles = await NewsService(Dio()).getNews();
-    isLoading = false;
-    setState(() {});
+    future = NewsService(Dio()).getNews();
   }
 
   @override
   Widget build(BuildContext context) {
-    return isLoading
-        ? const SliverToBoxAdapter(child: Center(child: CircularProgressIndicator()))
-        :articles.isNotEmpty ? NewsListView(
-            articles: articles,
-          ) : const SliverToBoxAdapter(
-            child: Text('oops !!!!!!!')
-          ) ; 
+    return FutureBuilder<List<ArticleModel>>(
+      future: future,
+      builder: (context, snapshot) {
+        if (snapshot.hasData) {
+          return NewsListView(
+            articles: snapshot.data!,
+          );
+        } else if (snapshot.hasError) {
+          return const SliverToBoxAdapter(
+            child: Text('Oops! Something went wrong.'),
+          );
+        } else {
+          return const SliverToBoxAdapter(
+            child: Center(
+              child: CircularProgressIndicator(),
+            ),
+          );
+        }
+      },
+    );
   }
 }
